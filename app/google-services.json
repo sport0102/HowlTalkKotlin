@@ -63,6 +63,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "212328495784-cok0oofjbdmbt7rdm8qfrtgfjhmlho7h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sport0102.myapplication",
+            "certificate_hash": "04b0605f40ddbe810f348571047d0b75e986a0ea"
+          }
+        },
+        {
           "client_id": "212328495784-had01lht5u1a74dkk5r131cge7pfo93c.apps.googleusercontent.com",
           "client_type": 3
         },
@@ -81,8 +89,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212328495784-had01lht5u1a74dkk5r131cge7pfo93c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
