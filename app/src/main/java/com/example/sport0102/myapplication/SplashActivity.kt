@@ -1,6 +1,7 @@
 package com.example.sport0102.myapplication
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.Toast
 import com.google.android.gms.tasks.Task
 import android.support.annotation.NonNull
 import android.support.v7.app.AlertDialog
+import android.view.WindowManager
 import com.google.android.gms.tasks.OnCompleteListener
 
 
@@ -20,6 +22,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         val configSettings = FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.DEBUG)
@@ -55,6 +58,8 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             })
             builder.create().show()
+        }else{
+            startActivity(Intent(this@SplashActivity,LoginActivity::class.java) )
         }
 
     }
