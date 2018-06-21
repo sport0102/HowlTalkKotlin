@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="rc_color">splash_background</string>
+
+    // splash activity
+    <string name="splash_background">splash_background</string>
+    <string name="splash_message_caps">splash_message_caps</string>
+    <string name="splash_message">splash_message</string>
 </resources>

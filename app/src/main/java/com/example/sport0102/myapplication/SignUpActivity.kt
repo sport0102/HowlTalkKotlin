@@ -11,12 +11,9 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
-    val emailEt by lazy { findViewById<EditText>(R.id.sign_up_et_email) }
-    val nameEt by lazy { findViewById<EditText>(R.id.sign_up_et_name) }
-    val pwdEt by lazy { findViewById<EditText>(R.id.sign_up_et_pwd) }
-    val signUpBtn by lazy { findViewById<Button>(R.id.sign_up_btn_signup) }
     val mFireBaseAuth = FirebaseAuth.getInstance()
     val mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
     val mFirebaseDatabase = FirebaseDatabase.getInstance()
@@ -24,19 +21,19 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
-        var splashBackground = mFirebaseRemoteConfig.getString(getString(R.string.rc_color))
+        var splashBackground = mFirebaseRemoteConfig.getString(getString(R.string.splash_background))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(Color.parseColor(splashBackground))
         }
-        signUpBtn.setBackgroundColor(Color.parseColor(splashBackground))
-        signUpBtn.setOnClickListener {
-            if(emailEt.text==null||nameEt.text==null||pwdEt.text==null){
+        sign_up_btn_signup.setBackgroundColor(Color.parseColor(splashBackground))
+        sign_up_btn_signup.setOnClickListener {
+            if(sign_up_et_email.text==null||sign_up_et_name.text==null||sign_up_btn_signup.text==null){
                 return@setOnClickListener
             }
-            mFireBaseAuth.createUserWithEmailAndPassword(emailEt.text.toString(), pwdEt.text.toString())
+            mFireBaseAuth.createUserWithEmailAndPassword(sign_up_et_email.text.toString(), sign_up_btn_signup.text.toString())
                 .addOnCompleteListener(this@SignUpActivity, OnCompleteListener {
                     var userModel : UserModel = UserModel()
-                    userModel.userName=nameEt.text.toString()
+                    userModel.userName=sign_up_et_name.text.toString()
                     var uid = it.getResult().user.uid
                     mFirebaseDatabase.getReference().child("users").child(uid).setValue(userModel)
                 }) }

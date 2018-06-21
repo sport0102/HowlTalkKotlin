@@ -14,16 +14,16 @@ import android.support.annotation.NonNull
 import android.support.v7.app.AlertDialog
 import android.view.WindowManager
 import com.google.android.gms.tasks.OnCompleteListener
+import kotlinx.android.synthetic.main.activity_splash.*
 
 
 class SplashActivity : AppCompatActivity() {
-    val linearLayout: LinearLayout by lazy { findViewById(R.id.splashacitivity_linearlayout) as LinearLayout }
-    var mFirebaseRemoteConfig: FirebaseRemoteConfig? = null
+    val mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         val configSettings = FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build()
@@ -47,19 +47,20 @@ class SplashActivity : AppCompatActivity() {
                     displayMessage()
                 }
     }
-    fun displayMessage(){
-        var splashBacground = mFirebaseRemoteConfig?.getString("splash_background")
-        var caps : Boolean? = mFirebaseRemoteConfig?.getBoolean("splash_message_caps")
-        var splashMessage = mFirebaseRemoteConfig?.getString("splash_message")
-        linearLayout.setBackgroundColor(Color.parseColor(splashBacground))
-        if(caps!!){
-            var builder : AlertDialog.Builder = AlertDialog.Builder(this)
+
+    fun displayMessage() {
+        var splashBacground = mFirebaseRemoteConfig?.getString(resources.getString(R.string.splash_background))
+        var caps: Boolean? = mFirebaseRemoteConfig?.getBoolean(resources.getString(R.string.splash_message_caps))
+        var splashMessage = mFirebaseRemoteConfig?.getString(resources.getString(R.string.splash_message))
+        splashacitivity_linearlayout.setBackgroundColor(Color.parseColor(splashBacground))
+        if (caps!!) {
+            var builder: AlertDialog.Builder = AlertDialog.Builder(this)
             builder.setMessage(splashMessage).setPositiveButton("확인", DialogInterface.OnClickListener { dialogInterface, i ->
                 finish()
             })
             builder.create().show()
-        }else{
-            startActivity(Intent(this@SplashActivity,LoginActivity::class.java) )
+        } else {
+            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
         }
 
     }
