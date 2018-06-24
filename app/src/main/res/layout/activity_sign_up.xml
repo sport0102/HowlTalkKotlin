@@ -45,6 +45,7 @@
             android:id="@+id/sign_up_et_pwd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPassword"
             android:hint="패스워드" />
     </android.support.design.widget.TextInputLayout>
 

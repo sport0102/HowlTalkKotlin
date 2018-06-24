@@ -61,6 +61,7 @@ class SplashActivity : AppCompatActivity() {
             builder.create().show()
         } else {
             startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+            finish()
         }
 
     }

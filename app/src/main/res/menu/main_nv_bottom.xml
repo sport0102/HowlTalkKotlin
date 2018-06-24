@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_people"
+        android:icon="@drawable/navi_people"
+        android:title="people">
+    </item>
+    <item
+        android:id="@+id/action_chat"
+        android:icon="@drawable/navi_chat"
+        android:title="chat">
+    </item>
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/navi_account"
+        android:title="account">
+    </item>
+</menu>
