@@ -54,7 +54,7 @@ class SignUpActivity : AppCompatActivity() {
                             var imageUrl = task2.getResult().downloadUrl.toString()
                             var userModel: UserModel = UserModel()
                             userModel.userName = sign_up_et_name.text.toString()
-                            userModel.profileUrl = imageUrl
+                            userModel.profileImageUrl= imageUrl
                             mFirebaseDatabase.getReference().child("users").child(uid).setValue(userModel)
                             startActivity(Intent(applicationContext,LoginActivity::class.java))
                             finish()
