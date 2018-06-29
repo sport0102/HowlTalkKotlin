@@ -1,6 +1,8 @@
 package com.example.sport0102.myapplication.fragment
 
+import android.app.ActivityOptions
 import android.app.Fragment
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,6 +14,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
+import com.example.sport0102.myapplication.chat.MessageActivity
 import com.example.sport0102.myapplication.model.UserModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -62,6 +65,10 @@ class PeopleFragment : Fragment() {
         override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
             Glide.with(p0.itemView.context).load(userModels.get(p1).profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_friend_iv_profileimage)
             p0.itemView.item_friend_tv_id.setText(userModels.get(p1).userName)
+            p0.itemView.setOnClickListener {
+                var activityOptions = ActivityOptions.makeCustomAnimation(view.context,R.anim.fromright,R.anim.toleft)
+                startActivity(Intent(view.context, MessageActivity::class.java),activityOptions.toBundle())
+            }
         }
 
         inner class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view) {

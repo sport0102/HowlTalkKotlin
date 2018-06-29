@@ -43,7 +43,7 @@ class SignUpActivity : AppCompatActivity() {
 
         sign_up_btn_signup.setBackgroundColor(Color.parseColor(splashBackground))
         sign_up_btn_signup.setOnClickListener {
-            if (sign_up_et_email.text == null || sign_up_et_name.text == null || sign_up_btn_signup.text == null) {
+            if (sign_up_et_email.text == null || sign_up_et_name.text == null || sign_up_btn_signup.text == null||imageUrl==null) {
                 return@setOnClickListener
             }
             mFireBaseAuth.createUserWithEmailAndPassword(sign_up_et_email.text.toString(), sign_up_et_pwd.text.toString())
@@ -54,10 +54,11 @@ class SignUpActivity : AppCompatActivity() {
                             var imageUrl = task2.getResult().downloadUrl.toString()
                             var userModel: UserModel = UserModel()
                             userModel.userName = sign_up_et_name.text.toString()
-                            userModel.profileImageUrl= imageUrl
-                            mFirebaseDatabase.getReference().child("users").child(uid).setValue(userModel)
-                            startActivity(Intent(applicationContext,LoginActivity::class.java))
-                            finish()
+                            userModel.profileImageUrl = imageUrl
+                            mFirebaseDatabase.getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener {
+                                startActivity(Intent(applicationContext, LoginActivity::class.java))
+                                finish()
+                            }
                         }
                     })
 

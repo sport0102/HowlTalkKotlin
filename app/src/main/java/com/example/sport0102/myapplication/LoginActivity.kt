@@ -23,7 +23,6 @@ class LoginActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(Color.parseColor(splashBackground))
         }
-        mFirebaseAuth.signOut()
         login_btn_login.setBackgroundColor(Color.parseColor(splashBackground))
         login_btn_signup.setBackgroundColor(Color.parseColor(splashBackground))
         login_btn_signup.setOnClickListener {
