@@ -49,12 +49,12 @@ class SignUpActivity : AppCompatActivity() {
             mFireBaseAuth.createUserWithEmailAndPassword(sign_up_et_email.text.toString(), sign_up_et_pwd.text.toString())
                     .addOnCompleteListener(this@SignUpActivity, OnCompleteListener {
                         var uid = it.getResult().user.uid
-
                         mFirebaseStorage.getReference().child("userImages").child(uid).putFile(imageUrl!!).addOnCompleteListener { task2: Task<UploadTask.TaskSnapshot> ->
                             var imageUrl = task2.getResult().downloadUrl.toString()
                             var userModel: UserModel = UserModel()
                             userModel.userName = sign_up_et_name.text.toString()
                             userModel.profileImageUrl = imageUrl
+                            userModel.uid=uid
                             mFirebaseDatabase.getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener {
                                 startActivity(Intent(applicationContext, LoginActivity::class.java))
                                 finish()

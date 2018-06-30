@@ -66,8 +66,10 @@ class PeopleFragment : Fragment() {
             Glide.with(p0.itemView.context).load(userModels.get(p1).profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_friend_iv_profileimage)
             p0.itemView.item_friend_tv_id.setText(userModels.get(p1).userName)
             p0.itemView.setOnClickListener {
+                var intent = Intent(view.context,MessageActivity::class.java)
+                intent.putExtra("destinationUid",userModels.get(p1).uid)
                 var activityOptions = ActivityOptions.makeCustomAnimation(view.context,R.anim.fromright,R.anim.toleft)
-                startActivity(Intent(view.context, MessageActivity::class.java),activityOptions.toBundle())
+                startActivity(intent,activityOptions.toBundle())
             }
         }
 
