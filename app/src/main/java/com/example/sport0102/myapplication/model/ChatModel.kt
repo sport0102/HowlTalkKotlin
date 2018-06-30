@@ -1,6 +1,8 @@
 package com.example.sport0102.myapplication.model
 
-class ChatModel{
-    lateinit var uid : String
-    lateinit var destinationUid: String
+data class ChatModel(var users:HashMap<String, Boolean>?=HashMap(),var comments:HashMap<String, Boolean>?=HashMap()) {
+    companion object {
+        data class Comment(var uid: String?=null, var message:String?=null)
+    }
 }
+
