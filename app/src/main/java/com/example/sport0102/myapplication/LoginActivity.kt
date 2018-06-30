@@ -19,6 +19,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        mFirebaseAuth.signOut()
         var splashBackground = mFirebaseRemoteConfig.getString(getString(R.string.splash_background))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(Color.parseColor(splashBackground))
@@ -30,11 +31,10 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
         login_btn_login.setOnClickListener {
-            mFirebaseAuth.signOut()
-//            var id =login_et_id.text.toString()
-//            var pwd = login_et_pwd.text.toString()
-            var id = "smlee@gmail.com"
-            var pwd = "123456"
+            var id =login_et_id.text.toString()
+            var pwd = login_et_pwd.text.toString()
+//            var id = "smlee@gmail.com"
+//            var pwd = "123456"
             mFirebaseAuth.signInWithEmailAndPassword(id,pwd).addOnCompleteListener {
                 //로그인 실패시
                 if (!it.isSuccessful) {

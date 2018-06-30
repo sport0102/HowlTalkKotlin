@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
 import com.example.sport0102.myapplication.chat.MessageActivity
 import com.example.sport0102.myapplication.model.UserModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.item_friend.view.*
 class PeopleFragment : Fragment() {
 
     var mFirebaseDatabase = FirebaseDatabase.getInstance()
+    var mFirebaseAuth= FirebaseAuth.getInstance()
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         var view = inflater!!.inflate(R.layout.fragment_people, container, false)
         view.fragment_people_rv.layoutManager = LinearLayoutManager(inflater.context)
@@ -38,6 +40,7 @@ class PeopleFragment : Fragment() {
 
         init {
             userModels = ArrayList<UserModel>()
+            var myUid = mFirebaseAuth.currentUser!!.uid
             mFirebaseDatabase.getReference().child("users").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
@@ -45,7 +48,11 @@ class PeopleFragment : Fragment() {
                 override fun onDataChange(p0: DataSnapshot) {
                     userModels.clear()
                     p0.children.forEach {
-                        userModels.add(it.getValue(UserModel::class.java)!!)
+                        var userModel = it.getValue(UserModel::class.java)!!
+                        if(userModel.uid.equals(myUid)){
+                            return@forEach
+                        }
+                        userModels.add(userModel)
                     }
                     notifyDataSetChanged()
                 }
