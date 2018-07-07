@@ -9,20 +9,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
 import com.example.sport0102.myapplication.model.ChatModel
+import com.example.sport0102.myapplication.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_message.*
+import kotlinx.android.synthetic.main.item_message.*
 import kotlinx.android.synthetic.main.item_message.view.*
 
 class MessageActivity : AppCompatActivity() {
     var mFirebaseDatabase = FirebaseDatabase.getInstance()
     var mFirebaseAuth = FirebaseAuth.getInstance()
-    var uid = mFirebaseAuth.currentUser!!.uid
+    var uid: String = mFirebaseAuth.currentUser!!.uid
     lateinit var destinationUid: String
     var chatroomUid: String? = null
     val tag = "MessageActivity"
@@ -31,44 +35,45 @@ class MessageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_message)
         destinationUid = intent.getStringExtra("destinationUid")
         Log.d(tag, destinationUid)
+        Log.d(tag, uid)
+        checkChatRoom()
         message_btn_send.setOnClickListener {
             var chatModel = ChatModel()
             chatModel.users?.put(uid, true)
             chatModel.users?.put(destinationUid, true)
-            Log.d(tag, uid)
-            Log.d(tag, destinationUid)
             var comments = ChatModel.Companion.Comment()
             comments.uid = uid
             comments.message = message_et_message.text.toString()
-            checkChatRoom()
             if (chatroomUid == null) {
-                Log.d(tag, "null")
-                message_btn_send.isEnabled=false
+                message_btn_send.isEnabled = false
                 mFirebaseDatabase.reference.child("chatrooms").push().setValue(chatModel).addOnCompleteListener {
-                    mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("commnets").push().setValue(comments).addOnCompleteListener {
-                        checkChatRoom()
-                    }
+                    checkChatRoom()
                 }
             } else {
-                Log.d(tag, "message")
-                mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("commnets").push().setValue(comments)
+                mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").push().setValue(comments)
             }
         }
     }
 
     fun checkChatRoom() {
+        Log.d(tag, "${uid} ~~~~~")
         mFirebaseDatabase.reference.child("chatrooms").orderByChild("users/${uid}").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
+                Log.d(tag, p0.key)
+                Log.d(tag, p0.children.toString())
                 p0.children.forEach {
                     var chatModel = it.getValue(ChatModel::class.java)
+                    Log.d(tag, chatModel.toString())
+                    Log.d(tag, chatModel!!.users.toString())
+                    Log.d(tag, chatModel!!.comments.toString())
                     Log.d(tag, chatModel.toString())
                     Log.d(tag, chatModel?.users?.keys.toString())
                     if (chatModel?.users?.containsKey(destinationUid)!!) {
                         chatroomUid = it.key
-                        message_btn_send.isEnabled=true
+                        message_btn_send.isEnabled = true
                         message_rv.layoutManager = LinearLayoutManager(this@MessageActivity)
                         message_rv.adapter = RecyclerViewAdapter()
                     }
@@ -79,10 +84,27 @@ class MessageActivity : AppCompatActivity() {
         })
     }
 
+
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        var comments : ArrayList<ChatModel.Companion.Comment> = ArrayList()
+        var comments: ArrayList<ChatModel.Companion.Comment>
+        lateinit var userModel: UserModel
 
         init {
+            comments = ArrayList()
+            mFirebaseDatabase.reference.child("users").child(destinationUid).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    userModel = p0.getValue(UserModel::class.java)!!
+                    getMessageList()
+                }
+
+            })
+
+        }
+
+        fun getMessageList() {
             mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
@@ -98,8 +120,9 @@ class MessageActivity : AppCompatActivity() {
             })
         }
 
+
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
-            var view : View =LayoutInflater.from(p0.context).inflate(R.layout.item_message,p0,false)
+            var view: View = LayoutInflater.from(p0.context).inflate(R.layout.item_message, p0, false)
             return MessageViewHolder(view)
         }
 
@@ -108,11 +131,21 @@ class MessageActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
-            Log.d("comments.get(p1)",comments.get(p1).toString())
-            p0.itemView.item_message_tv_message.text = comments.get(p1).toString()
+            if (comments.get(p1).uid == uid) {
+                p0.itemView.item_message_tv_message.text = comments.get(p1).message
+                p0.itemView.item_message_tv_message.setBackgroundResource(R.drawable.rightbuble)
+                p0.itemView.item_message_ll_destination.visibility = View.INVISIBLE
+            } else {
+                Glide.with(applicationContext).load(userModel.profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_message_iv_profile)
+                p0.itemView.item_message_tv_name.text = userModel.userName
+                p0.itemView.item_message_ll_destination.visibility = View.VISIBLE
+                p0.itemView.item_message_tv_message.setBackgroundResource(R.drawable.leftbuble)
+                p0.itemView.item_message_tv_message.text = comments.get(p1).message
+                p0.itemView.item_message_tv_message.textSize = 25f
+            }
         }
-        inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
     }
