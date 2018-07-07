@@ -6,6 +6,7 @@ import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,7 +51,9 @@ class MessageActivity : AppCompatActivity() {
                     checkChatRoom()
                 }
             } else {
-                mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").push().setValue(comments)
+                mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").push().setValue(comments).addOnCompleteListener {
+                    message_et_message.setText("")
+                }
             }
         }
     }
@@ -114,7 +117,9 @@ class MessageActivity : AppCompatActivity() {
                     p0.children.forEach {
                         comments.add(it.getValue(ChatModel.Companion.Comment::class.java)!!)
                     }
+                    // 메시지가 갱신
                     notifyDataSetChanged()
+                    message_rv.scrollToPosition(comments.size-1)
                 }
 
             })
@@ -135,6 +140,7 @@ class MessageActivity : AppCompatActivity() {
                 p0.itemView.item_message_tv_message.text = comments.get(p1).message
                 p0.itemView.item_message_tv_message.setBackgroundResource(R.drawable.rightbuble)
                 p0.itemView.item_message_ll_destination.visibility = View.INVISIBLE
+                p0.itemView.item_message_ll_main.gravity = Gravity.RIGHT
             } else {
                 Glide.with(applicationContext).load(userModel.profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_message_iv_profile)
                 p0.itemView.item_message_tv_name.text = userModel.userName
@@ -142,6 +148,7 @@ class MessageActivity : AppCompatActivity() {
                 p0.itemView.item_message_tv_message.setBackgroundResource(R.drawable.leftbuble)
                 p0.itemView.item_message_tv_message.text = comments.get(p1).message
                 p0.itemView.item_message_tv_message.textSize = 25f
+                p0.itemView.item_message_ll_main.gravity = Gravity.LEFT
             }
         }
 
