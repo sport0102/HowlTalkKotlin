@@ -16,13 +16,12 @@ import com.example.sport0102.myapplication.R
 import com.example.sport0102.myapplication.model.ChatModel
 import com.example.sport0102.myapplication.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.item_message.*
 import kotlinx.android.synthetic.main.item_message.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MessageActivity : AppCompatActivity() {
     var mFirebaseDatabase = FirebaseDatabase.getInstance()
@@ -31,6 +30,7 @@ class MessageActivity : AppCompatActivity() {
     lateinit var destinationUid: String
     var chatroomUid: String? = null
     val tag = "MessageActivity"
+    var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
@@ -51,6 +51,7 @@ class MessageActivity : AppCompatActivity() {
                     checkChatRoom()
                 }
             } else {
+                comments.timestamp=ServerValue.TIMESTAMP
                 mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").push().setValue(comments).addOnCompleteListener {
                     message_et_message.setText("")
                 }
@@ -150,6 +151,12 @@ class MessageActivity : AppCompatActivity() {
                 p0.itemView.item_message_tv_message.textSize = 25f
                 p0.itemView.item_message_ll_main.gravity = Gravity.LEFT
             }
+            var unixTime = comments.get(p1).timestamp.toString().toLong()
+            var date = Date(unixTime)
+            simpleDataFormat.timeZone= TimeZone.getTimeZone("Asia/Seoul")
+            var time = simpleDataFormat.format(date)
+            p0.itemView.item_message_tv_timestamp.setText(time)
+
         }
 
         inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
