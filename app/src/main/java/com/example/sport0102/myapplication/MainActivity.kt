@@ -7,6 +7,9 @@ import android.support.design.widget.NavigationView
 import android.util.Log
 import com.example.sport0102.myapplication.fragment.ChatFragment
 import com.example.sport0102.myapplication.fragment.PeopleFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,5 +32,13 @@ class MainActivity : AppCompatActivity() {
             }
             return@setOnNavigationItemSelectedListener true
         }
+        passPushTokenToServer()
+    }
+    fun passPushTokenToServer(){
+        var uid = FirebaseAuth.getInstance().currentUser!!.uid
+        var token = FirebaseInstanceId.getInstance().getToken()
+        var map : HashMap<String,Any> = HashMap()
+        map.put("pushToken", token!!)
+        FirebaseDatabase.getInstance().reference.child("users").child(uid).updateChildren(map)
     }
 }
