@@ -31,6 +31,7 @@ class MessageActivity : AppCompatActivity() {
     var chatroomUid: String? = null
     val tag = "MessageActivity"
     var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
