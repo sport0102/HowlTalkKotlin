@@ -163,4 +163,9 @@ class MessageActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.fromleft,R.anim.toright)
+    }
 }

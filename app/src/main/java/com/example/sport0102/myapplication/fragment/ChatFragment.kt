@@ -1,6 +1,8 @@
 package com.example.sport0102.myapplication.fragment
 
+import android.app.ActivityOptions
 import android.app.Fragment
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,6 +14,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
+import com.example.sport0102.myapplication.chat.MessageActivity
 import com.example.sport0102.myapplication.model.ChatModel
 import com.example.sport0102.myapplication.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_chat.view.*
 import kotlinx.android.synthetic.main.item_chat.view.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class ChatFragment : Fragment() {
@@ -39,10 +43,11 @@ class ChatFragment : Fragment() {
 
         var uid: String
         var chatModels: ArrayList<ChatModel>? = ArrayList()
+        var destinationUsers : ArrayList<String> = ArrayList()
         init {
             uid = mFirebaseAuth.currentUser!!.uid
 
-            mFirebaseDatabase.reference.child("chatrooms").orderByChild("users/${uid}").addListenerForSingleValueEvent(object : ValueEventListener {
+            mFirebaseDatabase.reference.child("chatrooms").orderByChild("users/${uid}").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 
@@ -74,6 +79,7 @@ class ChatFragment : Fragment() {
             chatModels!!.get(p1).users!!.keys.forEach {
                 if (!it.equals(uid)) {
                     destinationUid = it
+                    destinationUsers.add(it)
                 }
 
             }
@@ -91,7 +97,20 @@ class ChatFragment : Fragment() {
             var commentMap: TreeMap<String, ChatModel.Companion.Comment> = TreeMap(Collections.reverseOrder())
             commentMap.putAll(chatModels!!.get(p1).comments!!)
             var lastMessageKey = commentMap.keys.toTypedArray()[0]
+            // 시간 설정
             holder.itemView.item_chat_tv_lastmessage.setText(chatModels!!.get(p1).comments!!.get(lastMessageKey)!!.message)
+            var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
+            var unixTime = chatModels!!.get(p1).comments!!.get(lastMessageKey)!!.timestamp.toString().toLong()
+            var date = Date(unixTime)
+            simpleDataFormat.timeZone= TimeZone.getTimeZone("Asia/Seoul")
+            var time = simpleDataFormat.format(date)
+            holder.itemView.item_chat_tv_timestamp.setText(time)
+            holder.itemView.setOnClickListener {
+                var intent = Intent(holder.itemView.context,MessageActivity::class.java)
+                intent.putExtra("destinationUid",destinationUsers.get(p1))
+                var activityOptions : ActivityOptions = ActivityOptions.makeCustomAnimation(view.context,R.anim.fromright,R.anim.toleft)
+                startActivity(intent,activityOptions.toBundle())
+            }
 
         }
 

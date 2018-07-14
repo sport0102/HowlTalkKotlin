@@ -5,4 +5,7 @@
     <string name="splash_background">splash_background</string>
     <string name="splash_message_caps">splash_message_caps</string>
     <string name="splash_message">splash_message</string>
+    <string name="db_chatrooms">chatrooms2</string>
+    <string name="db_users">users2</string>2
+
 </resources>
