@@ -31,10 +31,10 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
         login_btn_login.setOnClickListener {
-//            var id =login_et_id.text.toString()
-//            var pwd = login_et_pwd.text.toString()
-            var id = "smlee@gmail.com"
-            var pwd = "123456"
+            var id =login_et_id.text.toString()
+            var pwd = login_et_pwd.text.toString()
+//            var id = "smlee@gmail.com"
+//            var pwd = "123456"
             mFirebaseAuth.signInWithEmailAndPassword(id,pwd).addOnCompleteListener {
                 //로그인 실패시
                 if (!it.isSuccessful) {

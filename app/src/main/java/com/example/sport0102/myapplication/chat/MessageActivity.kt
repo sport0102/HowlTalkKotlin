@@ -11,15 +11,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
 import com.example.sport0102.myapplication.model.ChatModel
+import com.example.sport0102.myapplication.model.NotificationModel
 import com.example.sport0102.myapplication.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.item_message.*
 import kotlinx.android.synthetic.main.item_message.view.*
+import okhttp3.*
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,6 +33,7 @@ class MessageActivity : AppCompatActivity() {
     var mFirebaseAuth = FirebaseAuth.getInstance()
     var uid: String = mFirebaseAuth.currentUser!!.uid
     lateinit var destinationUid: String
+    lateinit var userModel: UserModel
     var chatroomUid: String? = null
     val tag = "MessageActivity"
     var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
@@ -52,12 +58,40 @@ class MessageActivity : AppCompatActivity() {
                     checkChatRoom()
                 }
             } else {
-                comments.timestamp=ServerValue.TIMESTAMP
+                comments.timestamp = ServerValue.TIMESTAMP
                 mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").push().setValue(comments).addOnCompleteListener {
+                    sendGcm()
                     message_et_message.setText("")
                 }
             }
         }
+    }
+
+    private fun sendGcm() {
+        var gson: Gson = Gson()
+        var notificationModel = NotificationModel().apply {
+            this.to = userModel.pushToken
+            this.notification!!.title = "보낸이 아이디"
+            this.notification!!.text = message_et_message.text.toString()
+        }
+
+
+        var requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"), gson.toJson(notificationModel))
+        var request = Request.Builder()
+                .header("Content-Type", "application/json")
+                .addHeader("Authorization", "key=AIzaSyC2vr58VfsUByFLQ1wQTtgEeYN9inN_ypo")
+                .url("https://gcm-http.googleapis.com/gcm/send")
+                .post(requestBody)
+                .build()
+        var okHttpClient =OkHttpClient()
+        okHttpClient.newCall(request).enqueue(object : Callback{
+            override fun onFailure(call: Call?, e: IOException?) {
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+            }
+
+        })
     }
 
     fun checkChatRoom() {
@@ -92,7 +126,7 @@ class MessageActivity : AppCompatActivity() {
 
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         var comments: ArrayList<ChatModel.Companion.Comment>
-        lateinit var userModel: UserModel
+
 
         init {
             comments = ArrayList()
@@ -121,7 +155,7 @@ class MessageActivity : AppCompatActivity() {
                     }
                     // 메시지가 갱신
                     notifyDataSetChanged()
-                    message_rv.scrollToPosition(comments.size-1)
+                    message_rv.scrollToPosition(comments.size - 1)
                 }
 
             })
@@ -154,7 +188,7 @@ class MessageActivity : AppCompatActivity() {
             }
             var unixTime = comments.get(p1).timestamp.toString().toLong()
             var date = Date(unixTime)
-            simpleDataFormat.timeZone= TimeZone.getTimeZone("Asia/Seoul")
+            simpleDataFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
             var time = simpleDataFormat.format(date)
             p0.itemView.item_message_tv_timestamp.setText(time)
 
@@ -167,6 +201,6 @@ class MessageActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         finish()
-        overridePendingTransition(R.anim.fromleft,R.anim.toright)
+        overridePendingTransition(R.anim.fromleft, R.anim.toright)
     }
 }
