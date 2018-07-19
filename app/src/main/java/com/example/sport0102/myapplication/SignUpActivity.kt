@@ -13,6 +13,7 @@ import com.example.sport0102.myapplication.model.UserModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
@@ -49,6 +50,8 @@ class SignUpActivity : AppCompatActivity() {
             mFireBaseAuth.createUserWithEmailAndPassword(sign_up_et_email.text.toString(), sign_up_et_pwd.text.toString())
                     .addOnCompleteListener(this@SignUpActivity, OnCompleteListener {
                         var uid = it.getResult().user.uid
+                        var userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(sign_up_et_name.text.toString()).build()
+                        it.getResult().user.updateProfile(userProfileChangeRequest)
                         mFirebaseStorage.getReference().child("userImages").child(uid).putFile(imageUrl!!).addOnCompleteListener { task2: Task<UploadTask.TaskSnapshot> ->
                             var imageUrl = task2.getResult().downloadUrl.toString()
                             var userModel: UserModel = UserModel()

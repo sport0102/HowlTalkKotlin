@@ -71,8 +71,11 @@ class MessageActivity : AppCompatActivity() {
         var gson: Gson = Gson()
         var notificationModel = NotificationModel().apply {
             this.to = userModel.pushToken
-            this.notification!!.title = "보낸이 아이디"
+            var userName =mFirebaseAuth.currentUser!!.displayName
+            this.notification!!.title = userName
             this.notification!!.text = message_et_message.text.toString()
+            this.data!!.title = userName
+            this.data!!.text = message_et_message.text.toString()
         }
 
 
