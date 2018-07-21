@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.item_friend.view.*
 class PeopleFragment : Fragment() {
 
     var mFirebaseDatabase = FirebaseDatabase.getInstance()
-    var mFirebaseAuth= FirebaseAuth.getInstance()
+    var mFirebaseAuth = FirebaseAuth.getInstance()
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         var view = inflater!!.inflate(R.layout.fragment_people, container, false)
         view.fragment_people_rv.layoutManager = LinearLayoutManager(inflater.context)
@@ -49,7 +49,7 @@ class PeopleFragment : Fragment() {
                     userModels.clear()
                     p0.children.forEach {
                         var userModel = it.getValue(UserModel::class.java)!!
-                        if(userModel.uid.equals(myUid)){
+                        if (userModel.uid.equals(myUid)) {
                             return@forEach
                         }
                         userModels.add(userModel)
@@ -73,16 +73,17 @@ class PeopleFragment : Fragment() {
             Glide.with(p0.itemView.context).load(userModels.get(p1).profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_friend_iv_profileimage)
             p0.itemView.item_friend_tv_id.setText(userModels.get(p1).userName)
             p0.itemView.setOnClickListener {
-                var intent = Intent(view.context,MessageActivity::class.java)
-                intent.putExtra("destinationUid",userModels.get(p1).uid)
-                var activityOptions = ActivityOptions.makeCustomAnimation(view.context,R.anim.fromright,R.anim.toleft)
-                startActivity(intent,activityOptions.toBundle())
+                var intent = Intent(view.context, MessageActivity::class.java)
+                intent.putExtra("destinationUid", userModels.get(p1).uid)
+                var activityOptions = ActivityOptions.makeCustomAnimation(view.context, R.anim.fromright, R.anim.toleft)
+                startActivity(intent, activityOptions.toBundle())
+            }
+            if (userModels.get(p1).comment != null) {
+                p0.itemView.item_friend_tv_status.setText(userModels.get(p1).comment)
             }
         }
 
         inner class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            var profileImage = view.findViewById<ImageView>(R.id.item_friend_iv_profileimage)
-            var profileId = view.findViewById<TextView>(R.id.item_friend_tv_id)
         }
 
     }

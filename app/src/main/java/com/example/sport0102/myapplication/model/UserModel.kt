@@ -5,4 +5,5 @@ public class UserModel{
     lateinit var profileImageUrl : String
     lateinit var uid : String
     lateinit var pushToken: String
+    lateinit var comment: String
 }
