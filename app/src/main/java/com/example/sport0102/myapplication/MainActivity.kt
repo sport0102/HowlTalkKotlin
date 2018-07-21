@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.util.Log
+import com.example.sport0102.myapplication.fragment.AccountFragment
 import com.example.sport0102.myapplication.fragment.ChatFragment
 import com.example.sport0102.myapplication.fragment.PeopleFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -23,9 +24,13 @@ class MainActivity : AppCompatActivity() {
                     fragmentManager.beginTransaction().replace(R.id.main_fl, PeopleFragment()).commit()
                     return@setOnNavigationItemSelectedListener true
                 }
-                R.id.action_chat ->{
-                    Log.d("action_chat","chat")
+                R.id.action_chat -> {
+                    Log.d("action_chat", "chat")
                     fragmentManager.beginTransaction().replace(R.id.main_fl, ChatFragment()).commit()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.action_account -> {
+                    fragmentManager.beginTransaction().replace(R.id.main_fl, AccountFragment()).commit()
                     return@setOnNavigationItemSelectedListener true
                 }
 
@@ -34,10 +39,11 @@ class MainActivity : AppCompatActivity() {
         }
         passPushTokenToServer()
     }
-    fun passPushTokenToServer(){
+
+    fun passPushTokenToServer() {
         var uid = FirebaseAuth.getInstance().currentUser!!.uid
         var token = FirebaseInstanceId.getInstance().getToken()
-        var map : HashMap<String,Any> = HashMap()
+        var map: HashMap<String, Any> = HashMap()
         map.put("pushToken", token!!)
         FirebaseDatabase.getInstance().reference.child("users").child(uid).updateChildren(map)
     }
