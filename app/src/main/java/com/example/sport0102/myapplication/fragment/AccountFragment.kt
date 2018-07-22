@@ -31,7 +31,7 @@ class AccountFragment : Fragment() {
         builder.setView(view).setPositiveButton("확인", DialogInterface.OnClickListener({ dialogInterface, i ->
             var map = HashMap<String,Any>()
             map.put("comment",view.dialog_comment_et_status.text.toString())
-            FirebaseDatabase.getInstance().reference.child("users").child(FirebaseAuth.getInstance().currentUser!!.uid).updateChildren(map)
+            FirebaseDatabase.getInstance().reference.child(resources.getString(R.string.db_users)).child(FirebaseAuth.getInstance().currentUser!!.uid).updateChildren(map)
         })).setNegativeButton("취소", DialogInterface.OnClickListener({ dialogInterface, i ->
 
         }))

@@ -54,12 +54,12 @@ class MessageActivity : AppCompatActivity() {
             comments.message = message_et_message.text.toString()
             if (chatroomUid == null) {
                 message_btn_send.isEnabled = false
-                mFirebaseDatabase.reference.child("chatrooms").push().setValue(chatModel).addOnCompleteListener {
+                mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).push().setValue(chatModel).addOnCompleteListener {
                     checkChatRoom()
                 }
             } else {
                 comments.timestamp = ServerValue.TIMESTAMP
-                mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").push().setValue(comments).addOnCompleteListener {
+                mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").push().setValue(comments).addOnCompleteListener {
                     sendGcm()
                     message_et_message.setText("")
                 }
@@ -99,7 +99,7 @@ class MessageActivity : AppCompatActivity() {
 
     fun checkChatRoom() {
         Log.d(tag, "${uid} ~~~~~")
-        mFirebaseDatabase.reference.child("chatrooms").orderByChild("users/${uid}").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
+        mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).orderByChild("users/${uid}").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
 
@@ -133,7 +133,7 @@ class MessageActivity : AppCompatActivity() {
 
         init {
             comments = ArrayList()
-            mFirebaseDatabase.reference.child("users").child(destinationUid).addListenerForSingleValueEvent(object : ValueEventListener {
+            mFirebaseDatabase.reference.child(resources.getString(R.string.db_users)).child(destinationUid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 
@@ -147,7 +147,7 @@ class MessageActivity : AppCompatActivity() {
         }
 
         fun getMessageList() {
-            mFirebaseDatabase.reference.child("chatrooms").child(chatroomUid!!).child("comments").addValueEventListener(object : ValueEventListener {
+            mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 

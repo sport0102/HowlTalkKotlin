@@ -47,7 +47,7 @@ class ChatFragment : Fragment() {
         init {
             uid = mFirebaseAuth.currentUser!!.uid
 
-            mFirebaseDatabase.reference.child("chatrooms").orderByChild("users/${uid}").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
+            mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).orderByChild("users/${uid}").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 
@@ -83,7 +83,7 @@ class ChatFragment : Fragment() {
                 }
 
             }
-            mFirebaseDatabase.reference.child("users").child(destinationUid!!).addListenerForSingleValueEvent(object : ValueEventListener {
+            mFirebaseDatabase.reference.child(resources.getString(R.string.db_users)).child(destinationUid!!).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 

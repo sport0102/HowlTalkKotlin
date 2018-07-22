@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        fragmentManager.beginTransaction().replace(R.id.main_fl, PeopleFragment()).commit()
         main_nv_bottom.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_people -> {

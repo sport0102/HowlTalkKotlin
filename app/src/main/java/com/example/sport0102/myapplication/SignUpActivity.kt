@@ -58,7 +58,9 @@ class SignUpActivity : AppCompatActivity() {
                             userModel.userName = sign_up_et_name.text.toString()
                             userModel.profileImageUrl = imageUrl
                             userModel.uid=uid
-                            mFirebaseDatabase.getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener {
+                            userModel.comment=""
+                            userModel.pushToken=""
+                            mFirebaseDatabase.getReference().child(resources.getString(R.string.db_users)).child(uid).setValue(userModel).addOnSuccessListener {
                                 startActivity(Intent(applicationContext, LoginActivity::class.java))
                                 finish()
                             }

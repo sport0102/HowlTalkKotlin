@@ -41,7 +41,7 @@ class PeopleFragment : Fragment() {
         init {
             userModels = ArrayList<UserModel>()
             var myUid = mFirebaseAuth.currentUser!!.uid
-            mFirebaseDatabase.getReference().child("users").addValueEventListener(object : ValueEventListener {
+            mFirebaseDatabase.getReference().child(resources.getString(R.string.db_users)).addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 
