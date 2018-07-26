@@ -38,6 +38,7 @@ class MessageActivity : AppCompatActivity() {
     var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
     lateinit var dataReference: DatabaseReference
     lateinit var valueEventListener: ValueEventListener
+    var peopleCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,18 +160,26 @@ class MessageActivity : AppCompatActivity() {
 
                     p0.children.forEach {
                         var key = it.key
-                        var comment = it.getValue(ChatModel.Companion.Comment::class.java)
-                        comment!!.readUsers.put(uid, true)
-                        readUsersMap.put(key!!, comment)
-                        comments.add(comment!!)
+                        var commentOrigin = it.getValue(ChatModel.Companion.Comment::class.java)
+                        var commentModify = it.getValue(ChatModel.Companion.Comment::class.java)
+                        commentModify!!.readUsers.put(uid, true)
+                        readUsersMap.put(key!!, commentModify)
+                        comments.add(commentOrigin!!)
                     }
-                    mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").updateChildren(readUsersMap)
-                            .addOnCompleteListener {
-                                // 메시지가 갱신
-                                notifyDataSetChanged()
-                                message_rv.scrollToPosition(comments.size - 1)
-                            }
+                    if (!comments.get(comments.size - 1).readUsers.containsKey(uid)) {
 
+
+                        mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").updateChildren(readUsersMap)
+                                .addOnCompleteListener {
+                                    // 메시지가 갱신
+                                    notifyDataSetChanged()
+                                    message_rv.scrollToPosition(comments.size - 1)
+                                }
+
+                    } else {
+                        notifyDataSetChanged()
+                        message_rv.scrollToPosition(comments.size - 1)
+                    }
                 }
 
             })
@@ -212,22 +221,33 @@ class MessageActivity : AppCompatActivity() {
         }
 
         fun setReadCounter(position: Int, tv: TextView) {
-            mFirebaseDatabase.reference.child(applicationContext.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("users").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    var users: HashMap<String, Boolean> = p0!!.getValue() as HashMap<String, Boolean>
-                    var count = users.size - comments.get(position).readUsers.size
-                    if (count > 0) {
-                        tv.visibility = View.VISIBLE
-                        tv.text = count.toString()
-                    } else {
-                        tv.visibility = View.INVISIBLE
+            if (peopleCount == 0) {
+                mFirebaseDatabase.reference.child(applicationContext.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("users").addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
                     }
-                }
 
-            })
+                    override fun onDataChange(p0: DataSnapshot) {
+                        var users: HashMap<String, Boolean> = p0!!.getValue() as HashMap<String, Boolean>
+                        peopleCount =users.size
+                        var count = peopleCount - comments.get(position).readUsers.size
+                        if (count > 0) {
+                            tv.visibility = View.VISIBLE
+                            tv.text = count.toString()
+                        } else {
+                            tv.visibility = View.INVISIBLE
+                        }
+                    }
+
+                })
+            }else{
+                var count = peopleCount - comments.get(position).readUsers.size
+                if (count > 0) {
+                    tv.visibility = View.VISIBLE
+                    tv.text = count.toString()
+                } else {
+                    tv.visibility = View.INVISIBLE
+                }
+            }
         }
 
 
