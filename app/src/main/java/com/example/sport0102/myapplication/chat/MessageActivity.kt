@@ -2,7 +2,6 @@ package com.example.sport0102.myapplication.chat
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -10,8 +9,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
 import com.example.sport0102.myapplication.model.ChatModel
@@ -21,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_message.*
-import kotlinx.android.synthetic.main.item_message.*
 import kotlinx.android.synthetic.main.item_message.view.*
 import okhttp3.*
 import java.io.IOException
@@ -194,6 +192,7 @@ class MessageActivity : AppCompatActivity() {
                 p0.itemView.item_message_tv_message.setBackgroundResource(R.drawable.rightbuble)
                 p0.itemView.item_message_ll_destination.visibility = View.INVISIBLE
                 p0.itemView.item_message_ll_main.gravity = Gravity.RIGHT
+                setReadCounter(p1, p0.itemView.item_message_tv_readcounter_left)
             } else {
                 Glide.with(applicationContext).load(userModel.profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_message_iv_profile)
                 p0.itemView.item_message_tv_name.text = userModel.userName
@@ -202,6 +201,7 @@ class MessageActivity : AppCompatActivity() {
                 p0.itemView.item_message_tv_message.text = comments.get(p1).message
                 p0.itemView.item_message_tv_message.textSize = 25f
                 p0.itemView.item_message_ll_main.gravity = Gravity.LEFT
+                setReadCounter(p1, p0.itemView.item_message_tv_readcounter_right)
             }
             var unixTime = comments.get(p1).timestamp.toString().toLong()
             var date = Date(unixTime)
@@ -210,6 +210,26 @@ class MessageActivity : AppCompatActivity() {
             p0.itemView.item_message_tv_timestamp.setText(time)
 
         }
+
+        fun setReadCounter(position: Int, tv: TextView) {
+            mFirebaseDatabase.reference.child(applicationContext.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("users").addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    var users: HashMap<String, Boolean> = p0!!.getValue() as HashMap<String, Boolean>
+                    var count = users.size - comments.get(position).readUsers.size
+                    if (count > 0) {
+                        tv.visibility = View.VISIBLE
+                        tv.text = count.toString()
+                    } else {
+                        tv.visibility = View.INVISIBLE
+                    }
+                }
+
+            })
+        }
+
 
         inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
