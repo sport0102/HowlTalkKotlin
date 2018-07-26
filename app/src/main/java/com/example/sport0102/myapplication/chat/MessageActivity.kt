@@ -27,6 +27,7 @@ import okhttp3.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class MessageActivity : AppCompatActivity() {
     var mFirebaseDatabase = FirebaseDatabase.getInstance()
@@ -37,6 +38,8 @@ class MessageActivity : AppCompatActivity() {
     var chatroomUid: String? = null
     val tag = "MessageActivity"
     var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
+    lateinit var dataReference: DatabaseReference
+    lateinit var valueEventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +74,7 @@ class MessageActivity : AppCompatActivity() {
         var gson: Gson = Gson()
         var notificationModel = NotificationModel().apply {
             this.to = userModel.pushToken
-            var userName =mFirebaseAuth.currentUser!!.displayName
+            var userName = mFirebaseAuth.currentUser!!.displayName
             this.notification!!.title = userName
             this.notification!!.text = message_et_message.text.toString()
             this.data!!.title = userName
@@ -86,8 +89,8 @@ class MessageActivity : AppCompatActivity() {
                 .url("https://gcm-http.googleapis.com/gcm/send")
                 .post(requestBody)
                 .build()
-        var okHttpClient =OkHttpClient()
-        okHttpClient.newCall(request).enqueue(object : Callback{
+        var okHttpClient = OkHttpClient()
+        okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
             }
 
@@ -147,18 +150,29 @@ class MessageActivity : AppCompatActivity() {
         }
 
         fun getMessageList() {
-            mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").addValueEventListener(object : ValueEventListener {
+            dataReference = mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments")
+            valueEventListener = dataReference.addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
                     comments.clear()
+                    var readUsersMap = HashMap<String, Any>()
+
                     p0.children.forEach {
-                        comments.add(it.getValue(ChatModel.Companion.Comment::class.java)!!)
+                        var key = it.key
+                        var comment = it.getValue(ChatModel.Companion.Comment::class.java)
+                        comment!!.readUsers.put(uid, true)
+                        readUsersMap.put(key!!, comment)
+                        comments.add(comment!!)
                     }
-                    // 메시지가 갱신
-                    notifyDataSetChanged()
-                    message_rv.scrollToPosition(comments.size - 1)
+                    mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").updateChildren(readUsersMap)
+                            .addOnCompleteListener {
+                                // 메시지가 갱신
+                                notifyDataSetChanged()
+                                message_rv.scrollToPosition(comments.size - 1)
+                            }
+
                 }
 
             })
@@ -203,6 +217,7 @@ class MessageActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        dataReference.removeEventListener(valueEventListener)
         finish()
         overridePendingTransition(R.anim.fromleft, R.anim.toright)
     }

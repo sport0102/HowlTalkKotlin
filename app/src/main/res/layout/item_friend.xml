@@ -14,8 +14,8 @@
         <ImageView
             android:id="@+id/item_friend_iv_profileimage"
             android:layout_width="50dp"
-            android:layout_margin="10dp"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:layout_margin="10dp" />
 
         <TextView
             android:id="@+id/item_friend_tv_id"
@@ -24,26 +24,36 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="아이디" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center|right"
             android:layout_marginRight="10dp"
-            >
-            <TextView
+            android:gravity="center|right">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="상태메세지"
-                android:id="@+id/item_friend_tv_status"
-                />
+                android:layout_marginRight="10dp"
+                android:background="@android:color/darker_gray">
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:id="@+id/item_friend_tv_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="상태메세지" />
+            </LinearLayout>
+
 
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:orientation="horizontal"
-        android:background="@android:color/darker_gray">
+        android:background="@android:color/darker_gray"
+        android:orientation="horizontal">
 
     </LinearLayout>
 </LinearLayout>
