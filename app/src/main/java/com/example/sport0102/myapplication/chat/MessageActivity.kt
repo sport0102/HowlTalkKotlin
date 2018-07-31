@@ -37,7 +37,7 @@ class MessageActivity : AppCompatActivity() {
     val tag = "MessageActivity"
     var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
     lateinit var dataReference: DatabaseReference
-    lateinit var valueEventListener: ValueEventListener
+    var valueEventListener: ValueEventListener? = null
     var peopleCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -228,7 +228,7 @@ class MessageActivity : AppCompatActivity() {
 
                     override fun onDataChange(p0: DataSnapshot) {
                         var users: HashMap<String, Boolean> = p0!!.getValue() as HashMap<String, Boolean>
-                        peopleCount =users.size
+                        peopleCount = users.size
                         var count = peopleCount - comments.get(position).readUsers.size
                         if (count > 0) {
                             tv.visibility = View.VISIBLE
@@ -239,7 +239,7 @@ class MessageActivity : AppCompatActivity() {
                     }
 
                 })
-            }else{
+            } else {
                 var count = peopleCount - comments.get(position).readUsers.size
                 if (count > 0) {
                     tv.visibility = View.VISIBLE
@@ -257,7 +257,9 @@ class MessageActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        dataReference.removeEventListener(valueEventListener)
+        if (valueEventListener != null) {
+            dataReference.removeEventListener(valueEventListener!!)
+        }
         finish()
         overridePendingTransition(R.anim.fromleft, R.anim.toright)
     }

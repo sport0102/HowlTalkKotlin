@@ -27,7 +27,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".fragment.SelectFriendActivity"></activity>
+        <activity android:name=".fragment.SelectFriendActivity" />
+        <activity android:name=".chat.GroupMessageActivity"></activity>
     </application>
 
 </manifest>

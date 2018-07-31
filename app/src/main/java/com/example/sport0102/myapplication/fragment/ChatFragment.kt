@@ -14,6 +14,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
+import com.example.sport0102.myapplication.chat.GroupMessageActivity
 import com.example.sport0102.myapplication.chat.MessageActivity
 import com.example.sport0102.myapplication.model.ChatModel
 import com.example.sport0102.myapplication.model.UserModel
@@ -96,20 +97,29 @@ class ChatFragment : Fragment() {
             // 메세지를 내림차순으로 정렬 후 마지막 메세지의 키값을 가져옴
             var commentMap: TreeMap<String, ChatModel.Companion.Comment> = TreeMap(Collections.reverseOrder())
             commentMap.putAll(chatModels!!.get(p1).comments!!)
-            var lastMessageKey = commentMap.keys.toTypedArray()[0]
-            // 시간 설정
-            holder.itemView.item_chat_tv_lastmessage.setText(chatModels!!.get(p1).comments!!.get(lastMessageKey)!!.message)
-            var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
-            var unixTime = chatModels!!.get(p1).comments!!.get(lastMessageKey)!!.timestamp.toString().toLong()
-            var date = Date(unixTime)
-            simpleDataFormat.timeZone= TimeZone.getTimeZone("Asia/Seoul")
-            var time = simpleDataFormat.format(date)
-            holder.itemView.item_chat_tv_timestamp.setText(time)
+            if(commentMap.keys.size>0) {
+                var lastMessageKey = commentMap.keys.toTypedArray()[0]
+
+                // 시간 설정
+                holder.itemView.item_chat_tv_lastmessage.setText(chatModels!!.get(p1).comments!!.get(lastMessageKey)!!.message)
+                var simpleDataFormat = SimpleDateFormat("yyyy.MM.dd HH:mm")
+                var unixTime = chatModels!!.get(p1).comments!!.get(lastMessageKey)!!.timestamp.toString().toLong()
+                var date = Date(unixTime)
+                simpleDataFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+                var time = simpleDataFormat.format(date)
+                holder.itemView.item_chat_tv_timestamp.setText(time)
+
+            }
             holder.itemView.setOnClickListener {
-                var intent = Intent(holder.itemView.context,MessageActivity::class.java)
-                intent.putExtra("destinationUid",destinationUsers.get(p1))
-                var activityOptions : ActivityOptions = ActivityOptions.makeCustomAnimation(view.context,R.anim.fromright,R.anim.toleft)
-                startActivity(intent,activityOptions.toBundle())
+                var intent : Intent? = null
+                if(chatModels!!.get(p1).users!!.size>2){
+                    intent = Intent(holder.itemView.context, GroupMessageActivity::class.java)
+                }else{
+                    intent = Intent(holder.itemView.context, MessageActivity::class.java)
+                    intent.putExtra("destinationUid", destinationUsers.get(p1))
+                }
+                var activityOptions: ActivityOptions = ActivityOptions.makeCustomAnimation(view.context, R.anim.fromright, R.anim.toleft)
+                startActivity(intent, activityOptions.toBundle())
             }
 
         }
