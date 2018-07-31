@@ -37,7 +37,7 @@ class SelectFriendActivity : AppCompatActivity() {
         select_friend_rv.layoutManager = LinearLayoutManager(this)
         select_friend_btn_start.setOnClickListener {
             chatModel.users!!.put(mFirebaseAuth.currentUser!!.uid,true)
-            mFirebaseDatabase.getReference().child("chatrooms").push().setValue(chatModel)
+            mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).push().setValue(chatModel)
         }
     }
 

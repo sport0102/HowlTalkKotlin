@@ -115,7 +115,7 @@ class MessageActivity : AppCompatActivity() {
                     Log.d(tag, chatModel!!.comments.toString())
                     Log.d(tag, chatModel.toString())
                     Log.d(tag, chatModel?.users?.keys.toString())
-                    if (chatModel?.users?.containsKey(destinationUid)!!) {
+                    if (chatModel?.users?.containsKey(destinationUid)!! && chatModel.users!!.size == 2) {
                         chatroomUid = it.key
                         message_btn_send.isEnabled = true
                         message_rv.layoutManager = LinearLayoutManager(this@MessageActivity)
@@ -167,7 +167,6 @@ class MessageActivity : AppCompatActivity() {
                         comments.add(commentOrigin!!)
                     }
                     if (!comments.get(comments.size - 1).readUsers.containsKey(uid)) {
-
 
                         mFirebaseDatabase.reference.child(resources.getString(R.string.db_chatrooms)).child(chatroomUid!!).child("comments").updateChildren(readUsersMap)
                                 .addOnCompleteListener {

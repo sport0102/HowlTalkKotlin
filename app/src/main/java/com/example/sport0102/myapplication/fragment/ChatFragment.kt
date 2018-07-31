@@ -45,6 +45,7 @@ class ChatFragment : Fragment() {
         var uid: String
         var chatModels: ArrayList<ChatModel>? = ArrayList()
         var destinationUsers : ArrayList<String> = ArrayList()
+        var keys = ArrayList<String>()
         init {
             uid = mFirebaseAuth.currentUser!!.uid
 
@@ -57,6 +58,7 @@ class ChatFragment : Fragment() {
                     p0.children.forEach {
                         Log.d("getValue", it.getValue(ChatModel::class.java)!!.toString())
                         chatModels!!.add(it.getValue(ChatModel::class.java)!!)
+                        keys.add(it.key!!)
                     }
                     notifyDataSetChanged()
                 }
@@ -114,6 +116,7 @@ class ChatFragment : Fragment() {
                 var intent : Intent? = null
                 if(chatModels!!.get(p1).users!!.size>2){
                     intent = Intent(holder.itemView.context, GroupMessageActivity::class.java)
+                    intent.putExtra("destinationRoom", keys.get(p1))
                 }else{
                     intent = Intent(holder.itemView.context, MessageActivity::class.java)
                     intent.putExtra("destinationUid", destinationUsers.get(p1))
