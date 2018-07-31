@@ -1,16 +1,14 @@
 package com.example.sport0102.myapplication.fragment
 
 import android.app.ActivityOptions
-import android.app.Fragment
 import android.content.Intent
+import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
@@ -21,24 +19,22 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.fragment_people.view.*
+import kotlinx.android.synthetic.main.activity_select_friend.*
 import kotlinx.android.synthetic.main.item_friend.view.*
 
-class PeopleFragment : Fragment() {
+class SelectFriendActivity : AppCompatActivity() {
 
     var mFirebaseDatabase = FirebaseDatabase.getInstance()
     var mFirebaseAuth = FirebaseAuth.getInstance()
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        var view = inflater!!.inflate(R.layout.fragment_people, container, false)
-        view.fragment_people_rv.layoutManager = LinearLayoutManager(inflater.context)
-        view.fragment_people_rv.adapter = PeopleFragmentRecyclerViewAdapter()
-        view.fragment_people_fb.setOnClickListener {
-            startActivity(Intent(view.context, SelectFriendActivity::class.java))
-        }
-        return view
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_select_friend)
+        select_friend_rv.adapter = SelectFriendRecyclerViewAdapter()
+        select_friend_rv.layoutManager = LinearLayoutManager(this)
     }
 
-    inner class PeopleFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    inner class SelectFriendRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         var userModels: ArrayList<UserModel>
 
         init {
@@ -64,7 +60,7 @@ class PeopleFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
-            var view = LayoutInflater.from(p0.context).inflate(R.layout.item_friend, p0, false)
+            var view = LayoutInflater.from(p0.context).inflate(R.layout.item_friend_select, p0, false)
             return CustomViewHolder(view)
         }
 
@@ -76,9 +72,9 @@ class PeopleFragment : Fragment() {
             Glide.with(p0.itemView.context).load(userModels.get(p1).profileImageUrl).apply(RequestOptions().circleCrop()).into(p0.itemView.item_friend_iv_profileimage)
             p0.itemView.item_friend_tv_id.setText(userModels.get(p1).userName)
             p0.itemView.setOnClickListener {
-                var intent = Intent(view.context, MessageActivity::class.java)
+                var intent = Intent(applicationContext, MessageActivity::class.java)
                 intent.putExtra("destinationUid", userModels.get(p1).uid)
-                var activityOptions = ActivityOptions.makeCustomAnimation(view.context, R.anim.fromright, R.anim.toleft)
+                var activityOptions = ActivityOptions.makeCustomAnimation(applicationContext, R.anim.fromright, R.anim.toleft)
                 startActivity(intent, activityOptions.toBundle())
             }
             if (userModels.get(p1).comment != null) {

@@ -19,13 +19,15 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".chat.MessageActivity"></activity>
-        <service
-            android:name=".MyFirebaseMessagingService">
+        <activity android:name=".chat.MessageActivity" />
+
+        <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".fragment.SelectFriendActivity"></activity>
     </application>
 
 </manifest>
