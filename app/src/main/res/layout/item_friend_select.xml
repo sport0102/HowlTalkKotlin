@@ -12,7 +12,7 @@
         >
 
         <CheckBox
-            android:id="@+id/item_friend_cv"
+            android:id="@+id/item_friend_select_cv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -20,13 +20,13 @@
             />
 
         <ImageView
-            android:id="@+id/item_friend_iv_profileimage"
+            android:id="@+id/item_friend_select_iv_profileimage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp" />
 
         <TextView
-            android:id="@+id/item_friend_tv_id"
+            android:id="@+id/item_friend_select_tv_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -46,7 +46,7 @@
                 android:background="@android:color/darker_gray">
 
                 <TextView
-                    android:id="@+id/item_friend_tv_status"
+                    android:id="@+id/item_friend_select_tv_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
