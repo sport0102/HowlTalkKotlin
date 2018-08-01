@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sport0102.myapplication.R
+import com.example.sport0102.myapplication.chat.GroupMessageActivity
 import com.example.sport0102.myapplication.chat.MessageActivity
 import com.example.sport0102.myapplication.model.ChatModel
 import com.example.sport0102.myapplication.model.UserModel
@@ -36,8 +37,22 @@ class SelectFriendActivity : AppCompatActivity() {
         select_friend_rv.adapter = SelectFriendRecyclerViewAdapter()
         select_friend_rv.layoutManager = LinearLayoutManager(this)
         select_friend_btn_start.setOnClickListener {
-            chatModel.users!!.put(mFirebaseAuth.currentUser!!.uid,true)
-            mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).push().setValue(chatModel)
+            chatModel.users!!.put(mFirebaseAuth.currentUser!!.uid, true)
+            var comment = ChatModel.Companion.Comment().apply {
+                uid = ""
+                message = ""
+            }
+
+            var key = mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).push().key
+            mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).child(key!!).setValue(chatModel).addOnCompleteListener {
+                mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).child(key!!).child("comments").push().setValue(comment).addOnCompleteListener {
+                    var intent = Intent(applicationContext, GroupMessageActivity::class.java)
+                    intent.putExtra("destinationRoom", key)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
         }
     }
 

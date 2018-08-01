@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".chat.GroupMessageActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/group_message_et"
+        android:id="@+id/group_message_rv"
+        >
+
+
+    </android.support.v7.widget.RecyclerView>
+
     <EditText
         android:id="@+id/group_message_et"
         android:layout_width="match_parent"
