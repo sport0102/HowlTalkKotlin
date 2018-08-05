@@ -38,19 +38,12 @@ class SelectFriendActivity : AppCompatActivity() {
         select_friend_rv.layoutManager = LinearLayoutManager(this)
         select_friend_btn_start.setOnClickListener {
             chatModel.users!!.put(mFirebaseAuth.currentUser!!.uid, true)
-//            var comment = ChatModel.Companion.Comment().apply {
-//                uid = ""
-//                message = ""
-//            }
-
             var key = mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).push().key
             mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).child(key!!).setValue(chatModel).addOnCompleteListener {
-                //                mFirebaseDatabase.getReference().child(resources.getString(R.string.db_chatrooms)).child(key!!).child("comments").push().setValue(comment).addOnCompleteListener {
                 var intent = Intent(applicationContext, GroupMessageActivity::class.java)
                 intent.putExtra("destinationRoom", key)
                 startActivity(intent)
                 finish()
-//                }
             }
 
         }

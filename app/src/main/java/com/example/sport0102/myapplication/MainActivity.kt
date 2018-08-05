@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.util.Log
+import android.widget.Toast
 import com.example.sport0102.myapplication.fragment.AccountFragment
 import com.example.sport0102.myapplication.fragment.ChatFragment
 import com.example.sport0102.myapplication.fragment.PeopleFragment
+import com.google.android.gms.common.util.CrashUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         fragmentManager.beginTransaction().replace(R.id.main_fl, PeopleFragment()).commit()
+        passPushTokenToServer()
         main_nv_bottom.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_people -> {
@@ -38,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
             return@setOnNavigationItemSelectedListener true
         }
-        passPushTokenToServer()
+
     }
 
     fun passPushTokenToServer() {
@@ -46,6 +49,6 @@ class MainActivity : AppCompatActivity() {
         var token = FirebaseInstanceId.getInstance().getToken()
         var map: HashMap<String, Any> = HashMap()
         map.put("pushToken", token!!)
-        FirebaseDatabase.getInstance().reference.child("users").child(uid).updateChildren(map)
+        FirebaseDatabase.getInstance().reference.child(getString(R.string.db_users)).child(uid).updateChildren(map)
     }
 }
